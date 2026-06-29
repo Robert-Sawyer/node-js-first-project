@@ -1,9 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import {router as adminRoutes} from './routes/admin.js';
-import userRoutes from './routes/shop.js';
+import shopRoutes from './routes/shop.js';
 import path from "path";
 import dirRoot from './utils/path.js'
+import {get404} from "./controllers/error.js";
 
 const app = express();
 
@@ -14,10 +15,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(dirRoot, '..', 'public')));
 
 app.use('/admin', adminRoutes);
-app.use(userRoutes);
+app.use(shopRoutes);
 
-app.use('/', (req, res, next) => {
-    res.status(404).render('not-found', {pageTitle: 'Page not found'});
-})
+app.use(get404)
 
 app.listen(3000);
