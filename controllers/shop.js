@@ -1,4 +1,5 @@
 import Product from "../models/product.js";
+import Cart from "../models/cart.js";
 
 export function getProducts(req, res) {
     Product.fetchAll(products => {
@@ -16,6 +17,26 @@ export function getCart(req, res) {
         pageTitle: 'Cart',
         path: '/cart',
     })
+}
+
+export function postCart(req, res) {
+    const prodId = req.body.productId;
+
+    Product.findById(prodId, product => {
+        Cart.addProduct(prodId, product.price)
+    })
+    res.redirect('/cart');
+}
+
+export function getProductDetails(req, res) {
+    const prodId = req.params.productId;
+    Product.findById(prodId, (product) => {
+        res.render('shop/product-detail', {
+            pageTitle: product.title,
+            path: `/${prodId}`,
+            product: product,
+        });    })
+
 }
 
 export function getOrders(req, res) {

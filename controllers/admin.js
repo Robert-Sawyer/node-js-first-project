@@ -1,9 +1,11 @@
 import Product from "../models/product.js";
 
 export function getAddProduct(req, res) {
-    res.render('admin/add-product', {
+    res.render('admin/edit-product', {
         pageTitle: 'Add Product',
-        path: '/admin/add-product'});
+        path: '/admin/add-product',
+        editing: false
+    });
 }
 
 export function postAddProduct(req, res) {
@@ -15,6 +17,25 @@ export function postAddProduct(req, res) {
 
     product.save();
     res.redirect('/')
+}
+
+export function getEditProduct (req, res) {
+    const editMode = req.query.edit;
+    if (!editMode) {
+        return res.redirect('/');
+    }
+    const prodId = req.params.productId;
+    Product.findById(prodId, product => {
+        if (!product) {
+            return res.redirect('/');
+        }
+        res.render('admin/edit-product', {
+            pageTitle: 'Edit Product',
+            path: '/admin/edit-product',
+            editing: editMode,
+            product: product
+        });
+    });
 }
 
 export function postEditProduct(req, res) {
