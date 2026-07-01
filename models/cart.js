@@ -46,12 +46,28 @@ class Cart {
             const updatedCart = {...JSON.parse(data)};
             const product = updatedCart.products.find(product => product.id === id);
 
+            if (!product) {
+                return;
+            }
+
             updatedCart.products = updatedCart.products.filter(product => product.id !== id);
             updatedCart.totalPrice = updatedCart.totalPrice - productPrice * product.quantity;
 
             fs.writeFile(p, JSON.stringify(updatedCart), (err) => {
                 console.log(err);
             })
+        })
+    }
+
+    static getCart(callback) {
+        fs.readFile(p, (err, data) => {
+            const cart = JSON.parse(data);
+
+            if (err) {
+                callback(null)
+            } else {
+                callback(cart);
+            }
         })
     }
 }
