@@ -13,7 +13,7 @@ export function postAddProduct(req, res) {
     const price = req.body.price;
     const description = req.body.description;
     const image = req.body.imageUrl;
-    const product = new Product(title, image, description, price);
+    const product = new Product(null, title, image, description, price);
 
     product.save();
     res.redirect('/')
@@ -39,7 +39,24 @@ export function getEditProduct (req, res) {
 }
 
 export function postEditProduct(req, res) {
+    const prodId = req.body.productId; // dlatego, że input name z edit-product.ejs ma wartość "productId"
 
+    const updatedTitle = req.body.title; // jak powyżej i poniżej
+    const updatedPrice = req.body.price;
+    const updatedDescription = req.body.description;
+    const updatedImage = req.body.imageUrl;
+
+    const updatedProduct = new Product(prodId, updatedTitle, updatedImage, updatedDescription, updatedPrice);
+    updatedProduct.save();
+
+    res.redirect('/admin/products');
+}
+
+export function deleteProduct(req, res) {
+    const prodId = req.body.productId;
+
+    Product.delete(prodId);
+    res.redirect('/admin/products');
 }
 
 export function getAdminProducts(req, res) {
