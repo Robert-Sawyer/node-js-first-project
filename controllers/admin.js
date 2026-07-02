@@ -15,8 +15,10 @@ export function postAddProduct(req, res) {
     const image = req.body.imageUrl;
     const product = new Product(null, title, image, description, price);
 
-    product.save();
-    res.redirect('/')
+    product
+        .save()
+        .then(() => res.redirect('/'))
+        .catch(err => console.log(err));
 }
 
 export function getEditProduct (req, res) {

@@ -2,14 +2,16 @@ import Product from "../models/product.js";
 import Cart from "../models/cart.js";
 
 export function getProducts(req, res) {
-    Product.fetchAll(products => {
-        res.render('shop/products-list', {
-            prods: products,
-            pageTitle: 'All Products',
-            path: '/products',
-            hasProducts: products.length > 0,
-        });
-    });
+    Product.fetchAll()
+        .then(([products]) => {
+            res.render('shop/products-list', {
+                prods: products,
+                pageTitle: 'All Products',
+                path: '/products',
+                hasProducts: products.length > 0,
+            });
+        })
+        .catch(err => console.log(err));
 }
 
 export function getCart(req, res) {
@@ -57,13 +59,16 @@ export function postCartDeleteProduct(req, res) {
 
 export function getProductDetails(req, res) {
     const prodId = req.params.productId;
-    Product.findById(prodId, (product) => {
-        res.render('shop/product-detail', {
-            pageTitle: product.title,
-            path: `/${prodId}`,
-            product: product,
-        });    })
-
+    Product
+        .findById(prodId)
+        .then(([product]) => {
+            res.render('shop/product-detail', {
+                pageTitle: product.title,
+                path: `/${prodId}`,
+                product: product[0], // element pierwszy, ponieważ then() zwraca dwa elementy a nam chodzi o ten pierwszy, czyli właściwy produkt
+            })
+        })
+        .catch(err => console.log(err));
 }
 
 export function getOrders(req, res) {
@@ -81,12 +86,14 @@ export function getCheckout(req, res) {
 }
 
 export function getIndex(req, res) {
-    Product.fetchAll(products => {
-        res.render('shop/index', {
-            prods: products,
-            pageTitle: 'Shop',
-            path: '/',
-            hasProducts: products.length > 0,
-        });
-    });
+    Product.fetchAll()
+        .then(([products]) => {
+            res.render('shop/index', {
+                prods: products,
+                pageTitle: 'Shop',
+                path: '/',
+                hasProducts: products.length > 0,
+            });
+        })
+        .catch(err => console.log(err));
 }

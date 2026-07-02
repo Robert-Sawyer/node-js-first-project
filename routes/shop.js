@@ -4,9 +4,10 @@ import {
     getCheckout,
     getIndex,
     getOrders,
-    getProductDetails,
     getProducts,
-    postCart, postCartDeleteProduct
+    postCart,
+    postCartDeleteProduct,
+    getProductDetails
 } from "../controllers/shop.js";
 
 const router = express.Router();
