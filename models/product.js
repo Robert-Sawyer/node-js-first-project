@@ -1,33 +1,57 @@
-import db from '../utils/database.js';
+import {Sequelize} from "sequelize";
 
-import Cart from "./cart.js";
+import {sequelize} from '../utils/database.js'
 
-class Product {
-    constructor(id, title, imageUrl, description, price) {
-        this.id = id;
-        this.title = title;
-        this.imageUrl = imageUrl;
-        this.description = description;
-        this.price = price;
+const Product = sequelize.define('product', {
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+    },
+    title: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    price: {
+        type: Sequelize.DOUBLE,
+        allowNull: false
+    },
+    imageUrl: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    description: {
+        type: Sequelize.STRING
     }
+})
 
-    save() {
-        return db.execute('INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)', [
-            this.title, this.price, this.description, this.imageUrl
-        ])
-    }
-
-    static delete(id) {
-
-    }
-
-    static fetchAll() {
-        return db.execute('SELECT * FROM products')
-    }
-
-    static findById(id) {
-        return db.execute('SELECT * FROM products WHERE products.id = ?', [id])
-    }
-}
+// class Product {
+//     constructor(id, title, imageUrl, description, price) {
+//         this.id = id;
+//         this.title = title;
+//         this.imageUrl = imageUrl;
+//         this.description = description;
+//         this.price = price;
+//     }
+//
+//     save() {
+//         return db.execute('INSERT INTO products (title, price, description, imageUrl) VALUES (?, ?, ?, ?)', [
+//             this.title, this.price, this.description, this.imageUrl
+//         ])
+//     }
+//
+//     static delete(id) {
+//
+//     }
+//
+//     static fetchAll() {
+//         return db.execute('SELECT * FROM products')
+//     }
+//
+//     static findById(id) {
+//         return db.execute('SELECT * FROM products WHERE products.id = ?', [id])
+//     }
+// }
 
 export default Product;

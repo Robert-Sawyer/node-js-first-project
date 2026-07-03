@@ -5,6 +5,7 @@ import shopRoutes from './routes/shop.js';
 import path from "path";
 import dirRoot from './utils/path.js'
 import {get404} from "./controllers/error.js";
+import {sequelize} from "./utils/database.js";
 
 const app = express();
 
@@ -17,6 +18,12 @@ app.use(express.static(path.join(dirRoot, '..', 'public')));
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
-app.use(get404)
+app.use(get404);
 
-app.listen(3000);
+sequelize.sync().then((result) => {
+    console.log(result);
+    app.listen(3000);
+}).catch((err) => {
+    console.log(err);
+})
+

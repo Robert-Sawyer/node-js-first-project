@@ -2,8 +2,8 @@ import Product from "../models/product.js";
 import Cart from "../models/cart.js";
 
 export function getProducts(req, res) {
-    Product.fetchAll()
-        .then(([products]) => {
+    Product.findAll()
+        .then(products => {
             res.render('shop/products-list', {
                 prods: products,
                 pageTitle: 'All Products',
@@ -35,7 +35,6 @@ export function getCart(req, res) {
             });
         })
     })
-
 }
 
 export function postCart(req, res) {
@@ -59,16 +58,30 @@ export function postCartDeleteProduct(req, res) {
 
 export function getProductDetails(req, res) {
     const prodId = req.params.productId;
+
     Product
-        .findById(prodId)
-        .then(([product]) => {
+        .findByPk(prodId)
+        .then((product) => {
             res.render('shop/product-detail', {
                 pageTitle: product.title,
                 path: `/${prodId}`,
-                product: product[0], // element pierwszy, ponieważ then() zwraca dwa elementy a nam chodzi o ten pierwszy, czyli właściwy produkt
+                product: product,
             })
         })
         .catch(err => console.log(err));
+
+    //Poniżej wersja alternatywna z wykorzystaniem findAll()
+
+    // Product
+    //     .findAll({where: {id: prodId}})
+    //     .then((products) => {
+    //         res.render('shop/product-detail', {
+    //             pageTitle: products[0].title,
+    //             path: `/${prodId}`,
+    //             product: products[0],
+    //         })
+    //     })
+    //     .catch(err => console.log(err));
 }
 
 export function getOrders(req, res) {
@@ -86,8 +99,8 @@ export function getCheckout(req, res) {
 }
 
 export function getIndex(req, res) {
-    Product.fetchAll()
-        .then(([products]) => {
+    Product.findAll()
+        .then(products => {
             res.render('shop/index', {
                 prods: products,
                 pageTitle: 'Shop',
