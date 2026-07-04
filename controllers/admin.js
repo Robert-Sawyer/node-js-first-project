@@ -14,11 +14,11 @@ export function postAddProduct(req, res) {
     const description = req.body.description;
     const imageUrl = req.body.imageUrl;
 
-    Product.create({
+    req.user.createProduct({
         title,
         price,
         imageUrl,
-        description
+        description,
     }).then((result) => {
         console.log(result);
         res.redirect('/admin/products');
@@ -35,9 +35,11 @@ export function getEditProduct (req, res) {
 
     const prodId = req.params.productId;
 
-    Product
-        .findByPk(prodId)
-        .then((product) => {
+    req.user.getProducts({where: {id: prodId}})
+        // Product.findByPk(prodId) // można też tak pobrać produkty, ale poprzez usera upewniamy się, że user faktycznie jest powązany z produktem
+        .then((products) => {
+            const product = products[0];
+
             if (!product) {
                 return res.redirect('/');
             }
@@ -87,7 +89,7 @@ export function deleteProduct(req, res) {
 }
 
 export function getAdminProducts(req, res) {
-    Product.findAll()
+    req.user.getProducts()
         .then(products => {
             res.render('admin/products', {
                 prods: products,
