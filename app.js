@@ -8,6 +8,8 @@ import {get404} from "./controllers/error.js";
 import {sequelize} from "./utils/database.js";
 import Product from "./models/product.js";
 import User from "./models/user.js";
+import CartItem from "./models/cartItem.js";
+import Cart from "./models/cart.js";
 
 const app = express();
 
@@ -32,16 +34,21 @@ app.use(shopRoutes);
 
 app.use(get404);
 
-// Stowrzenie relacji między Produktem i Userem
+// Stowrzenie relacji między Produktem, Userem i Koszykiem
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
-User.hasMany(Product)
+User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
+
 
 sequelize
-    // .sync({force: true}) // dodaje to bo tabela z Produktami juz istnieje i trzeba stworzyć relacje z Userem
-    .sync()
+     .sync({force: true}) // dodaje to bo tabela z Produktami juz istnieje i trzeba stworzyć relacje z Userem
+    // .sync()
     .then((result) => {
         return User.findByPk(2);
-        console.log(result);
+        // console.log(result);
     })
     .then(user => {
         if (!user) {

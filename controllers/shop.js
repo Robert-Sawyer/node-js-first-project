@@ -1,5 +1,5 @@
 import Product from "../models/product.js";
-import Cart from "../models/cart.js";
+import CartItem from "../models/cartItem.js";
 
 export function getProducts(req, res) {
     Product.findAll()
@@ -15,7 +15,7 @@ export function getProducts(req, res) {
 }
 
 export function getCart(req, res) {
-    Cart.getCart(cart => {
+    CartItem.getCart(cart => {
         Product.fetchAll(products => {
             const cartProducts = [];
             for (const product of products) {
@@ -41,7 +41,7 @@ export function postCart(req, res) {
     const prodId = req.body.productId;
 
     Product.findById(prodId, product => {
-        Cart.addProduct(prodId, product.price)
+        CartItem.addProduct(prodId, product.price)
     })
     res.redirect('/cart');
 }
@@ -50,7 +50,7 @@ export function postCartDeleteProduct(req, res) {
     const prodId = req.body.productId;
 
     Product.findById(prodId, product => {
-        Cart.removeProduct(prodId, product.price);
+        CartItem.removeProduct(prodId, product.price);
 
         res.redirect('/cart');
     })
