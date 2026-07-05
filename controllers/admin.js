@@ -19,8 +19,7 @@ export function postAddProduct(req, res) {
         price,
         imageUrl,
         description,
-    }).then((result) => {
-        console.log(result);
+    }).then(() => {
         res.redirect('/admin/products');
     }).catch((err) => {
         console.log(err);
@@ -67,9 +66,9 @@ export function postEditProduct(req, res) {
         product.price = updatedPrice;
         product.description = updatedDescription;
         product.imageUrl = updatedImage;
+
         product.save()
-    }).then(result => {
-        console.log("UPDATED PRODUCT");
+    }).then(() => {
         res.redirect('/admin/products');
     }).catch(err => console.log(err));
 }
@@ -81,8 +80,7 @@ export function deleteProduct(req, res) {
         .then((product) => {
             return product.destroy();
         })
-        .then(result => {
-            console.log('DELETED PRODUCT');
+        .then(() => {
             res.redirect('/admin/products');
         })
         .catch(err => console.log(err));

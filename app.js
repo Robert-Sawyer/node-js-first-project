@@ -44,11 +44,10 @@ Product.belongsToMany(Cart, { through: CartItem });
 
 
 sequelize
-     .sync({force: true}) // dodaje to bo tabela z Produktami juz istnieje i trzeba stworzyć relacje z Userem
-    // .sync()
-    .then((result) => {
-        return User.findByPk(2);
-        // console.log(result);
+     //.sync({force: true}) // dodaje to bo tabela z Produktami juz istnieje i trzeba stworzyć relacje z Userem
+    .sync()
+    .then(() => {
+        return User.findByPk(1);
     })
     .then(user => {
         if (!user) {
@@ -61,8 +60,11 @@ sequelize
         return user
     })
     .then(user => {
-        console.log(user);
+        return user.createCart()
+    })
+    .then(cart => {
         app.listen(3000);
+
     })
     .catch((err) => {
     console.log(err);
