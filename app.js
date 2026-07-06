@@ -10,6 +10,8 @@ import Product from "./models/product.js";
 import User from "./models/user.js";
 import CartItem from "./models/cartItem.js";
 import Cart from "./models/cart.js";
+import OrderItem from "./models/orderItem.js";
+import Order from "./models/order.js";
 
 const app = express();
 
@@ -20,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(dirRoot, '..', 'public')));
 
 app.use((req,res,next) => {
-    User.findByPk(2)
+    User.findByPk(1)
         .then((user) => {
             req.user = user;
             next()
@@ -34,18 +36,20 @@ app.use(shopRoutes);
 
 app.use(get404);
 
-// Stowrzenie relacji między Produktem, Userem i Koszykiem
+// Stowrzenie relacji między Produktem, Userem, Koszykiem i Zamówieniem
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasMany(Product);
 User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
-
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem });
 
 sequelize
      //.sync({force: true}) // dodaje to bo tabela z Produktami juz istnieje i trzeba stworzyć relacje z Userem
-    .sync()
+     .sync()
     .then(() => {
         return User.findByPk(1);
     })
