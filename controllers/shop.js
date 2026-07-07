@@ -91,7 +91,7 @@ export function getProductDetails(req, res) {
     const prodId = req.params.productId;
 
     Product
-        .findByPk(prodId)
+        .findById(prodId)
         .then((product) => {
             res.render('shop/product-detail', {
                 pageTitle: product.title,

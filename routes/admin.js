@@ -1,11 +1,11 @@
 import express from 'express';
 import {
-    // deleteProduct,
+    deleteProduct,
     getAddProduct,
-    // getAdminProducts,
-    // getEditProduct,
+    getAdminProducts,
+    getEditProduct,
     postAddProduct,
-    // postEditProduct
+    postEditProduct
 } from '../controllers/admin.js';
 
 const router = express.Router();
@@ -14,15 +14,15 @@ const router = express.Router();
 router.get('/add-product', getAddProduct)
 
 // /admin/products => GET
-// router.get('/products', getAdminProducts);
+router.get('/products', getAdminProducts);
 
 // /admin/add-product => POST
 router.post('/add-product', postAddProduct)
 
-// router.get('/edit-product/:productId', getEditProduct)
-//
-// router.post('/edit-product', postEditProduct);
-//
-// router.post('/delete-product', deleteProduct);
+router.get('/edit-product/:productId', getEditProduct)
+
+router.post('/edit-product', postEditProduct);
+
+router.post('/delete-product', deleteProduct);
 
 export {router};

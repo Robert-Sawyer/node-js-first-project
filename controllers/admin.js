@@ -1,4 +1,7 @@
+import mongodb from "mongodb";
 import Product from "../models/product.js";
+
+const ObjectId = mongodb.ObjectId;
 
 export function getAddProduct(req, res) {
     res.render('admin/edit-product', {
@@ -16,7 +19,7 @@ export function postAddProduct(req, res) {
 
     const product = new Product(title, price, description, imageUrl)
 
-    // SEQUELIZE
+    // SEQUELIZE (zamiast product.save())
     // req.user.createProduct({
     //     title,
     //     price,
@@ -34,75 +37,78 @@ export function postAddProduct(req, res) {
              })
 }
 
-// export function getEditProduct (req, res) {
-//     const editMode = req.query.edit;
-//     if (!editMode) {
-//         return res.redirect('/');
-//     }
-//
-//     const prodId = req.params.productId;
-//
-//     req.user.getProducts({where: {id: prodId}})
-//         // Product.findByPk(prodId) // można też tak pobrać produkty, ale poprzez usera upewniamy się, że user faktycznie jest powązany z produktem
-//         .then((products) => {
-//             const product = products[0];
-//
-//             if (!product) {
-//                 return res.redirect('/');
-//             }
-//
-//             res.render('admin/edit-product', {
-//                 pageTitle: 'Edit Product',
-//                 path: '/admin/edit-product',
-//                 editing: editMode,
-//                 product: product
-//             });
-//         })
-//         .catch(err => console.log(err));
-// }
-//
-// export function postEditProduct(req, res) {
-//     const prodId = req.body.productId; // dlatego, że input name z edit-product.ejs ma wartość "productId"
-//
-//     const updatedTitle = req.body.title; // jak powyżej i poniżej
-//     const updatedPrice = req.body.price;
-//     const updatedDescription = req.body.description;
-//     const updatedImage = req.body.imageUrl;
-//
-//     Product.findByPk(prodId).then((product) => {
-//         product.title = updatedTitle;
-//         product.price = updatedPrice;
-//         product.description = updatedDescription;
-//         product.imageUrl = updatedImage;
-//
-//         product.save()
-//     }).then(() => {
-//         res.redirect('/admin/products');
-//     }).catch(err => console.log(err));
-// }
-//
-// export function deleteProduct(req, res) {
-//     const prodId = req.body.productId;
-//
-//     Product.findByPk(prodId)
-//         .then((product) => {
-//             return product.destroy();
-//         })
-//         .then(() => {
-//             res.redirect('/admin/products');
-//         })
-//         .catch(err => console.log(err));
-// }
-//
-// export function getAdminProducts(req, res) {
-//     req.user.getProducts()
-//         .then(products => {
-//             res.render('admin/products', {
-//                 prods: products,
-//                 pageTitle: 'Admin Products',
-//                 path: 'admin/products',
-//                 hasProducts: products.length > 0,
-//             });
-//         })
-//         .catch(err => console.log(err));
-// }
+export function getEditProduct (req, res) {
+    const editMode = req.query.edit;
+    if (!editMode) {
+        return res.redirect('/');
+    }
+
+    const prodId = req.params.productId;
+
+    Product.findById(prodId)
+        .then((product) => {
+            if (!product) {
+                return res.redirect('/');
+            }
+
+            res.render('admin/edit-product', {
+                pageTitle: 'Edit Product',
+                path: '/admin/edit-product',
+                editing: editMode,
+                product: product
+            });
+        })
+        .catch(err => console.log(err));
+}
+
+export function postEditProduct(req, res) {
+    const prodId = req.body.productId; // dlatego, że input name z edit-product.ejs ma wartość "productId"
+
+    const updatedTitle = req.body.title; // jak powyżej i poniżej
+    const updatedPrice = req.body.price;
+    const updatedDescription = req.body.description;
+    const updatedImage = req.body.imageUrl;
+
+    const product = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImage, new ObjectId(prodId));
+
+    product.save()
+    .then(() => {
+        res.redirect('/admin/products');
+    }).catch(err => console.log(err));
+
+    // SEQUELIZE
+
+    // Product.findByPk(prodId).then((product) => {
+    //     product.title = updatedTitle;
+    //     product.price = updatedPrice;
+    //     product.description = updatedDescription;
+    //     product.imageUrl = updatedImage;
+    //
+    //     product.save()
+    // }).then(() => {
+    //     res.redirect('/admin/products');
+    // }).catch(err => console.log(err));
+}
+
+export function deleteProduct(req, res) {
+    const prodId = req.body.productId;
+
+    Product.deleteById(prodId)
+        .then(() => {
+            res.redirect('/admin/products');
+        })
+        .catch(err => console.log(err));
+}
+
+export function getAdminProducts(req, res) {
+    Product.fetchAll()
+        .then(products => {
+            res.render('admin/products', {
+                prods: products,
+                pageTitle: 'Admin Products',
+                path: 'admin/products',
+                hasProducts: products.length > 0,
+            });
+        })
+        .catch(err => console.log(err));
+}
