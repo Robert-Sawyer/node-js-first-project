@@ -6,6 +6,7 @@ import path from "path";
 import dirRoot from './utils/path.js'
 import {get404} from "./controllers/error.js";
 import mongoConnect from "./utils/database.js";
+import User from "./models/user.js";
 
 const app = express();
 
@@ -16,15 +17,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(dirRoot, '..', 'public')));
 
 app.use((req,res,next) => {
-    // User.findByPk(1)
-    //     .then((user) => {
-    //         req.user = user;
-    //         next()
-    //     })
-    //     .catch((err) => {
-    //         console.log(err);
-    //     })
-    next()
+    User.findById("6a4de92da2bf4a72a2cb0f44")
+        .then((user) => {
+            req.user = new User(user.username, user.email, user.cart, user._id);
+            next()
+        })
+        .catch((err) => {
+            console.log(err);
+        })
 })
 
 app.use('/admin', adminRoutes);
