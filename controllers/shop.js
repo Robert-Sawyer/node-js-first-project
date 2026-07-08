@@ -115,28 +115,8 @@ export function getProductDetails(req, res) {
 }
 
 export function postOrder(req, res) {
-    let fetchedCart;
-
     req.user
-        .getCart()
-        .then(cart => {
-            fetchedCart = cart;
-
-            return cart.getProducts()
-        })
-        .then(products => {
-            return req.user
-                .createOrder()
-                .then(order => {
-                return order.addProducts(products.map(product => {
-                    product.orderItem = {quantity: product.cartItem.quantity}; // należy użyć takiej samej nazwy (orderItem), co w define() wewnątrz model orderItem
-                    return product
-                }))
-            }).catch(err => console.log(err));
-        })
-        .then(() => {
-            return fetchedCart.setProducts(null);
-        })
+        .addOrder()
         .then(() => {
             res.redirect('/orders');
 
@@ -145,7 +125,7 @@ export function postOrder(req, res) {
 }
 
 export function getOrders(req, res) {
-    req.user.getOrders({include: ['products']}) //trzeba to dodać, żeby sequelize pobrało zamówienia z powiązanym produktem (sequelize robi z tego liczbę mnogą). Wtedy w orders.ejs trzeba robić loop po products, nie po orderItem. Wtedy to products dostaje klucz orderItem i quantity wyciąga się z stamtąd.
+    req.user.getOrders()
         .then(orders => {
             res.render('shop/orders', {
                 pageTitle: 'Orders',
@@ -154,6 +134,16 @@ export function getOrders(req, res) {
             })
         }).catch(err => console.log(err));
 
+
+    // SEQUELIZE
+    // req.user.getOrders({include: ['products']}) //trzeba to dodać, żeby sequelize pobrało zamówienia z powiązanym produktem (sequelize robi z tego liczbę mnogą). Wtedy w orders.ejs trzeba robić loop po products, nie po orderItem. Wtedy to products dostaje klucz orderItem i quantity wyciąga się z stamtąd.
+    //     .then(orders => {
+    //         res.render('shop/orders', {
+    //             pageTitle: 'Orders',
+    //             path: '/orders',
+    //             orders
+    //         })
+    //     }).catch(err => console.log(err));
 }
 
 export function getCheckout(req, res) {
